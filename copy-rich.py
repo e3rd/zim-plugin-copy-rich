@@ -82,11 +82,12 @@ class RichCopyWindow(MainWindowExtension):
 
         def launch():
             # get markdown from clipboard
-            contents = check_output(['xclip', '-selection', 'clipboard', '-o', '-t', 'text/plain']).decode("utf-8")
+            contents = check_output(['xclip', '-selection', 'clipboard', '-o', '-t', 'text/plain'])\
+                .decode("unicode-escape")
             # convert to text/html
             contents = check_output(['pandoc', '-f', 'markdown', '-t', 'html'], input=contents, text=True)
             # store text/html to clipboard
-            check_output(["xclip", "-sel", "clip", "-t", "text/html", "-f"], input=contents, text=True)
+            check_output(["xclip", "-selection", "clipboard", "-t", "text/html", "-f"], input=contents, text=True)
             logger.debug("Copied to Rich.")
 
         # if pushed immediately without thread clipboard would not be ready.
