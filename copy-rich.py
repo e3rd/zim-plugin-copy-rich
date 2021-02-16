@@ -4,6 +4,7 @@
 from __future__ import print_function
 
 import logging
+import re
 from subprocess import check_output
 from threading import Thread
 
@@ -85,7 +86,15 @@ class RichCopyWindow(MainWindowExtension):
             contents = check_output(['xclip', '-selection', 'clipboard', '-o', '-t', 'text/plain'])\
                 .decode("unicode-escape")
             # convert to text/html
-            contents = check_output(['pandoc', '-f', 'markdown', '-t', 'html'], input=contents, text=True)
+            contents = check_output(['pandoc', '-f', 'markdown', '-t', 'html', '--wrap', 'preserve'],
+                                    input=contents, text=True)
+            # remove some problematic \n that pandoc's --wrap=preserve adds
+            contents = re.sub('(?<=h[0-9]>)\n', '', contents)
+            contents = re.sub('(?<=ul>)\n', '', contents)
+            contents = re.sub('(?<=li>)\n', '', contents)
+            contents = re.sub('(?<=p>)\n', '', contents)
+            # replace single newlines with <br>
+            contents = re.sub('(?<!\n)\n(?!\n)', '<br>', contents)
             # store text/html to clipboard
             check_output(["xclip", "-selection", "clipboard", "-t", "text/html", "-f"], input=contents, text=True)
             logger.debug("Copied to Rich.")
