@@ -47,36 +47,36 @@ class RichCopyWindow(MainWindowExtension):
     def __init__(self, plugin, window):
         super().__init__(plugin, window)
 
-    def _add_actions(self, uimanager):
-        """ Set up menu items.
-            Here we override parent function that adds menu items.
+    # def _add_actions(self, uimanager):
+    #     """ Set up menu items.
+    #         Here we override parent function that adds menu items.
+    #
+    #         If we did not override, all the items would be placed directly in Tools, not in Edit.
+    #     """
+    #
+    #     def get_actions(obj):
+    #         import inspect
+    #         return inspect.getmembers(obj.__class__, lambda m: isinstance(m, ActionMethod))
+    #
+    #     actions = get_actions(self)
+    #     if actions:
+    #         self._uimanager = uimanager
+    #         action_group = get_gtk_actiongroup(self)
+    #         uimanager.insert_action_group(action_group, 0)
+    #
+    #         xml = '''
+    #                 <ui>
+    #                 <menubar name='menubar'>
+    #                         <menu action='edit_menu'>
+    #                             <menuitem action='copy_rich'/>
+    #                         </menu>
+    #                 </menubar>
+    #                 </ui>
+    #                 '''
+    #
+    #         self._uimanager.add_ui_from_string(xml)
 
-            If we did not override, all the items would be placed directly in Tools, not in Edit.
-        """
-
-        def get_actions(obj):
-            import inspect
-            return inspect.getmembers(obj.__class__, lambda m: isinstance(m, ActionMethod))
-
-        actions = get_actions(self)
-        if actions:
-            self._uimanager = uimanager
-            action_group = get_gtk_actiongroup(self)
-            uimanager.insert_action_group(action_group, 0)
-
-            xml = '''
-                    <ui>
-                    <menubar name='menubar'>
-                            <menu action='edit_menu'>
-                                <menuitem action='copy_rich'/>                                
-                            </menu>
-                    </menubar>
-                    </ui>
-                    '''
-
-            self._uimanager.add_ui_from_string(xml)
-
-    @action(_('Copy Rich _HTML'), accelerator='<ctrl><shift>c')
+    @action(_('Copy Rich _HTML'), accelerator='<ctrl><shift>c', menuhints='edit')
     def copy_rich(self):
         """ cut current text and call send to tasks dialog """
         self.window.pageview.textview.do_copy_clipboard("Markdown (pandoc)")
